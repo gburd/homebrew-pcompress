@@ -1,0 +1,27 @@
+name: brew test-bot
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  formula:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: Homebrew/actions/setup-homebrew@main
+      - uses: actions/checkout@v4
+      - name: Tap this checkout
+        run: |
+          mkdir -p "$(brew --repository)/Library/Taps/gburd"
+          ln -s "$PWD" "$(brew --repository)/Library/Taps/gburd/homebrew-pcompress"
+      - name: Style and audit
+        run: |
+          brew style gburd/pcompress/pcompress
+          brew audit --strict --online gburd/pcompress/pcompress || true
+      - name: Build from source
+        run: brew install --build-from-source --verbose gburd/pcompress/pcompress
+      - name: Test
+        run: brew test --verbose gburd/pcompress/pcompress
