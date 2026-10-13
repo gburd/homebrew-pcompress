@@ -20,10 +20,13 @@ jobs:
         run: |
           mkdir -p "$(brew --repository)/Library/Taps/gburd"
           ln -s "$PWD" "$(brew --repository)/Library/Taps/gburd/homebrew-pcompress"
-      - name: Style and audit
-        run: |
-          brew style gburd/pcompress/pcompress
-          brew audit --strict --online gburd/pcompress/pcompress || true
+      - name: Style
+        run: brew style gburd/pcompress/pcompress
+      - name: Audit (tap rules)
+        run: brew audit --strict --online --formula gburd/pcompress/pcompress
+      - name: Audit (homebrew-core rules, informational)
+        continue-on-error: true
+        run: brew audit --strict --online --new --formula gburd/pcompress/pcompress
       - name: Build from source
         run: brew install --build-from-source --verbose gburd/pcompress/pcompress || brew list gburd/pcompress/pcompress
       - name: Test
