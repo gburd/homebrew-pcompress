@@ -20,7 +20,7 @@ class Pcompress < Formula
   def install
     # ./config is a hand-written script, not autoconf.
     system "./config", "--prefix=#{prefix}", "--portable", "--disable-wavpack",
-                       "--with-openssl=#{Formula["openssl@3"].opt_prefix}"
+                       "--with-openssl=#{formula_opt_prefix("openssl@3")}"
     system "make"
     system "make", "install"
   end
