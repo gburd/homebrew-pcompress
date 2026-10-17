@@ -3,8 +3,8 @@ class Pcompress < Formula
   homepage "https://codeberg.org/gregburd/pcompress"
   # Release tarball: includes the bundled lz4/zstd/libbsc/libarchive sources
   # (git submodules) that GitHub's generated archives omit.
-  url "https://github.com/gburd/pcompress/releases/download/v4.0.2/pcompress-4.0.2.tar.gz"
-  sha256 "9d624f7ee877553d64bf0f4015630dee567b305815d295b39b57b7bcc75d6010"
+  url "https://github.com/gburd/pcompress/releases/download/v4.1.0/pcompress-4.1.0.tar.gz"
+  sha256 "448c34f01865c1c5f735330d51f0c142b1882c90e6ac77c2ff9749577cc71ff3"
   license "LGPL-3.0-or-later"
 
   depends_on "autoconf" => :build
@@ -31,5 +31,21 @@ class Pcompress < Formula
     system bin/"pcompress", "-c", "zstd", "-l", "6", testpath/"in.txt"
     system bin/"pcompress", "-d", testpath/"in.txt.pz", testpath/"out.txt"
     assert_equal (testpath/"in.txt").read, (testpath/"out.txt").read
+
+    # The library: installed header, pkg-config file, and the fd API.
+    (testpath/"t.c").write <<~C
+      #include <pcompress/pcompress.h>
+      int main(void) {
+        pc_ctx_t *c = pc_new();
+        int rv = pc_compress_fd(c, 0, 1);
+        pc_free(c);
+        return rv != 0;
+      }
+    C
+    flags = shell_output("pkgconf --cflags --libs libpcompress").split
+    system ENV.cc, "t.c", "-o", "t", *flags
+    system "./t < in.txt > lib.pz"
+    system "#{bin}/pcompress -d -p < lib.pz > lib.out"
+    assert_equal (testpath/"in.txt").read, (testpath/"lib.out").read
   end
 end
