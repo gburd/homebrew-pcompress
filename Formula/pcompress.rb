@@ -3,8 +3,8 @@ class Pcompress < Formula
   homepage "https://codeberg.org/gregburd/pcompress"
   # Release tarball: includes the bundled lz4/zstd/libbsc/libarchive sources
   # (git submodules) that GitHub's generated archives omit.
-  url "https://github.com/gburd/pcompress/releases/download/v4.3.0/pcompress-4.3.0.tar.gz"
-  sha256 "79698714f9d78900113327700b84753321fae945bc303258d3132abf93c49e3d"
+  url "https://github.com/gburd/pcompress/releases/download/v4.3.1/pcompress-4.3.1.tar.gz"
+  sha256 "80bfe8fc5403978de873388762e28dbd327da935929f35f0e2bb8c743771e27d"
   license "LGPL-3.0-or-later"
 
   depends_on "autoconf" => :build
